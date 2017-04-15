@@ -24,17 +24,17 @@ function createColumns($mysqli, $tableName, &$tableSyntax, $sql)
         $tableSyntax = "(";
         foreach ($tableInfo as $_tableInfo) {
 
-            $tableSyntax.= $_tableInfo->name.",";
+            $tableSyntax.= "`".$_tableInfo->name."`,";
 
             if(in_array($_tableInfo->type,array(1,2,3,4,5,6,7,253,254,246))) {
                 $sql[$_tableInfo->name] = "
                     ALTER TABLE __sync 
-                    ADD " . $_tableInfo->name . " " . $tableTypes[$_tableInfo->type] . "(" . $_tableInfo->length . ")
+                    ADD `" . $_tableInfo->name . "` " . $tableTypes[$_tableInfo->type] . "(" . $_tableInfo->length . ")
                 ";
             }else{
                 $sql[$_tableInfo->name] = "
                     ALTER TABLE __sync 
-                    ADD " . $_tableInfo->name . " " . $tableTypes[$_tableInfo->type]."
+                    ADD `" . $_tableInfo->name . "` " . $tableTypes[$_tableInfo->type]."
                 ";
             }
 
@@ -74,7 +74,7 @@ foreach ($tables as $_table => &$tableSyntax) {
         while ($obj = $result->fetch_object()) {
             $i++;
 
-            if( ($i % 500) ){
+            if( ($i % 100)==0 ){
                 echo " Batch ".$i." ".$_table.PHP_EOL;
             }
 
@@ -82,12 +82,11 @@ foreach ($tables as $_table => &$tableSyntax) {
             $sql = "INSERT INTO __sync " . $tableSyntax . " VALUES (";
 
             foreach ($obj as $key) {
-                $sql .= "'".$key . "',";
+                $sql .= "'".addslashes($key) . "',";
             }
 
             $sql .= ")";
             $sql = str_replace(",)", ")", $sql);
-
 
             $mysqli->query($sql);
         }
