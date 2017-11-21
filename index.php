@@ -6,7 +6,7 @@
  * Time: 10:05
  */
 
-$ini = parse_ini_file("config.ini");
+$ini = parse_ini_file("settings.ini");
 
 // ----------------------------------------------------------------
 $mysqli = new mysqli($ini['host'], $ini['user'], $ini['pass'], $ini['dbname']);
